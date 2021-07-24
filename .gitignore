@@ -54,3 +54,13 @@ build-iPhoneSimulator/
 
 # Used by RuboCop. Remote config files pulled in from inherit_from directive.
 # .rubocop-https?--*
+
+
+.vagrant/
+.DS_Store/
+.idea/
+.DS_Store/
+Oracle VirtualBox/.vagrant/
+Oracle VirtualBox/.DS_Store
+kubernetes/.idea/
+kubernetes/.DS_Store/
