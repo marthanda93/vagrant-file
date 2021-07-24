@@ -27,7 +27,7 @@ Vagrant.configure(k8s['api_version']) do |config|
             enable_firewall.inline = <<-SHELL
                 curl -o /etc/yum.repos.d/mssql-server.repo https://packages.microsoft.com/config/rhel/7/mssql-server-2019.repo
                 yum makecache
-                yum install -y mssql-server
+                yum install -y mssql-server net-tools
 
                 # To start the SQL Server Agent in Linux based SQL Server
                 /opt/mssql/bin/mssql-conf set sqlagent.enabled true
@@ -42,6 +42,8 @@ Vagrant.configure(k8s['api_version']) do |config|
                 ACCEPT_EULA=Y yum -y install mssql-tools unixODBC-devel
                 systemctl enable mssql-server
                 echo 'export PATH=$PATH:/opt/mssql/bin:/opt/mssql-tools/bin' | tee /etc/profile.d/mssql.sh
+                echo 'export ACCEPT_EULA=Y' >> $HOME/.bashrc
+                echo 'export ACCEPT_EULA=Y' >> /home/vagrant/.bashrc
 
                 iptables -A INPUT -p tcp --dport 1433 -j ACCEPT
                 iptables-save > /etc/sysconfig/iptables
