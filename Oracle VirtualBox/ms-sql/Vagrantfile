@@ -1,0 +1,53 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'yaml'
+require 'open3'
+
+k8s = YAML.load_file(File.join(File.dirname(__FILE__), 'config.yaml'))
+ENV["LC_ALL"] = "en_US.UTF-8"
+
+Vagrant.configure(k8s['api_version']) do |config|
+	config.vm.boot_timeout = 600
+
+    config.vm.define "#{k8s['cluster']['master']}" do |subconfig|
+        subconfig.vm.post_up_message = $msg
+        subconfig.vm.box = k8s['image']
+        subconfig.vm.box_check_update = false
+
+        subconfig.vm.hostname = "#{k8s['cluster']['master']}"
+        subconfig.vm.network :private_network, ip: "#{k8s['ip_part']}.10"
+
+        subconfig.vm.provider "virtualbox" do |vb|
+            vb.memory = k8s['resources']['master']['memory']
+            vb.cpus = k8s['resources']['master']['cpus']
+        end
+
+        subconfig.vm.provision "Enable Firewall", type: "shell" do |enable_firewall|
+            enable_firewall.inline = <<-SHELL
+                curl -o /etc/yum.repos.d/mssql-server.repo https://packages.microsoft.com/config/rhel/7/mssql-server-2019.repo
+                yum makecache
+                yum install -y mssql-server
+
+                # To start the SQL Server Agent in Linux based SQL Server
+                /opt/mssql/bin/mssql-conf set sqlagent.enabled true
+                # Disable High Availability
+                /opt/mssql/bin/mssql-conf set hadr.hadrenabled  0
+                # turns off customer feedback
+                /opt/mssql/bin/mssql-conf set telemetry.customerfeedback false
+                # Enable outbound network access, Outbound network access for R, Python, and Java extensions
+                /opt/mssql/bin/mssql-conf set extensibility outboundnetworkaccess 1
+
+                curl -o /etc/yum.repos.d/msprod.repo https://packages.microsoft.com/config/rhel/8/prod.repo
+                ACCEPT_EULA=Y yum -y install mssql-tools unixODBC-devel
+                systemctl enable mssql-server
+                echo 'export PATH=$PATH:/opt/mssql/bin:/opt/mssql-tools/bin' | tee /etc/profile.d/mssql.sh
+
+                iptables -A INPUT -p tcp --dport 1433 -j ACCEPT
+                iptables-save > /etc/sysconfig/iptables
+            SHELL
+        end
+
+        subconfig.vm.provision "Reboot to load all config", type:"shell", inline: "shutdown -r now"
+    end
+end
