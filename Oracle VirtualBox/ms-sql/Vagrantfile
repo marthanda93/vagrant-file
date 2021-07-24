@@ -46,6 +46,7 @@ Vagrant.configure(k8s['api_version']) do |config|
                 echo 'export ACCEPT_EULA=Y' >> /home/vagrant/.bashrc
 
                 sed -i 's/User=.*/User=root/g' /usr/lib/systemd/system/mssql-server.service
+                sed -i '/\[Service\]/a Environment="ACCEPT_EULA=Y"' /usr/lib/systemd/system/mssql-server.service
                 systemctl daemon-reload
 
                 iptables -A INPUT -p tcp --dport 1433 -j ACCEPT
