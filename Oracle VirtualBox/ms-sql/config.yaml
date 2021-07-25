@@ -8,7 +8,8 @@ cluster:
     master: "mssql"
 
 mssql:
-    password: setSt1234
+    password: "setSt1234"
+    database: "Navin"
 
 resources:
     master:

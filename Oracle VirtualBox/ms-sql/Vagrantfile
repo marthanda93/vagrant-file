@@ -23,8 +23,8 @@ Vagrant.configure(k8s['api_version']) do |config|
             vb.cpus = k8s['resources']['master']['cpus']
         end
 
-        subconfig.vm.provision "Enable Firewall", type: "shell" do |enable_firewall|
-            enable_firewall.inline = <<-SHELL
+        subconfig.vm.provision "Enable Firewall", type: "shell" do |enable_mssql|
+            enable_mssql.inline = <<-SHELL
                 curl -o /etc/yum.repos.d/mssql-server.repo https://packages.microsoft.com/config/rhel/7/mssql-server-2019.repo
                 yum makecache
                 yum install -y mssql-server net-tools
@@ -49,9 +49,12 @@ Vagrant.configure(k8s['api_version']) do |config|
                 sed -i '/\[Service\]/a Environment="ACCEPT_EULA=Y"' /usr/lib/systemd/system/mssql-server.service
                 sed -i '/\[Service\]/a Environment="SA_PASSWORD=#{k8s['mssql']['password']}"' /usr/lib/systemd/system/mssql-server.service
                 systemctl daemon-reload
+                systemctl start mssql-server
 
                 iptables -A INPUT -p tcp --dport 1433 -j ACCEPT
                 iptables-save > /etc/sysconfig/iptables
+
+                /opt/mssql-tools/bin/sqlcmd -S mssql -U SA -P "#{k8s['mssql']['password']}" -Q "CREATE DATABASE #{k8s['mssql']['database']}"
             SHELL
         end
 
