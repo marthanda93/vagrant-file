@@ -57,6 +57,7 @@ Vagrant.configure(k8s['api_version']) do |config|
                 # Wait for ms-sql ups
                 sleep 15s
                 /opt/mssql-tools/bin/sqlcmd -S mssql -U SA -P "#{k8s['mssql']['password']}" -Q "CREATE DATABASE #{k8s['mssql']['database']}"
+                /opt/mssql-tools/bin/sqlcmd -S mssql -U SA -P "#{k8s['mssql']['password']}" -Q "CREATE TABLE #{k8s['mssql']['database']}.dbo.#{k8s['mssql']['table']}"
             SHELL
         end
 

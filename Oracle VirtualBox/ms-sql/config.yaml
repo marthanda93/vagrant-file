@@ -10,6 +10,14 @@ cluster:
 mssql:
     password: "setSt1234"
     database: "Navin"
+    table: >
+        Persons (
+            name varchar(255),
+            age varchar(255),
+            address varchar(255),
+            phone varchar(255),
+            email varchar(255)
+        );
 
 resources:
     master:
