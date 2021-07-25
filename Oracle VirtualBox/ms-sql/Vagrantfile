@@ -47,7 +47,7 @@ Vagrant.configure(k8s['api_version']) do |config|
 
                 sed -i 's/User=.*/User=root/g' /usr/lib/systemd/system/mssql-server.service
                 sed -i '/\[Service\]/a Environment="ACCEPT_EULA=Y"' /usr/lib/systemd/system/mssql-server.service
-                sed -i '/\[Service\]/a Environment="SA_PASSWORD=setSt1234"' /usr/lib/systemd/system/mssql-server.service
+                sed -i '/\[Service\]/a Environment="SA_PASSWORD=#{k8s['mssql']['password']}"' /usr/lib/systemd/system/mssql-server.service
                 systemctl daemon-reload
 
                 iptables -A INPUT -p tcp --dport 1433 -j ACCEPT
@@ -58,3 +58,5 @@ Vagrant.configure(k8s['api_version']) do |config|
         subconfig.vm.provision "Reboot to load all config", type:"shell", inline: "shutdown -r now"
     end
 end
+
+
