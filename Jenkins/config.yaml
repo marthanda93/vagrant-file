@@ -1,0 +1,19 @@
+---
+api_version: "2"
+image: "ubuntu/focal64"
+ip_part: "192.168.56"
+user: "vagrant"
+
+cluster:
+    master: "jenkins-master"
+
+resources:
+    master:
+        cpus: 4
+        memory: 4096
+        root_password: 123
+        user: anand
+        password: 123
+
+net:
+    network_type: private_network
