@@ -17,13 +17,14 @@ Vagrant.configure(k8s['api_version']) do |config|
 
         subconfig.vm.hostname = "#{k8s['cluster']['master']}"
         subconfig.vm.network :private_network, ip: "#{k8s['ip_part']}.10"
+        subconfig.vm.network "forwarded_port", guest: 8080, host: 8080
 
         subconfig.vm.provider "virtualbox" do |vb|
             vb.memory = k8s['resources']['master']['memory']
             vb.cpus = k8s['resources']['master']['cpus']
         end
 
-        subconfig.vm.provision "shell", path: "mongo-bootstrap.sh"
+        subconfig.vm.provision "shell", path: "jenkins.sh"
         subconfig.vm.provision "Reboot to load all config", type:"shell", inline: "shutdown -r now"
     end
 end

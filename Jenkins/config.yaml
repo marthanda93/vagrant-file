@@ -1,6 +1,6 @@
 ---
 api_version: "2"
-image: "ubuntu/focal64"
+image: "centos/7"
 ip_part: "192.168.56"
 user: "vagrant"
 
