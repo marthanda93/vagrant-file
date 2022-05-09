@@ -1,12 +1,12 @@
 #!/bin/bash
 
 sudo yum upgrade -y
-sudo yum install -y java-11-openjdk net-tools wget firewalld
+sudo yum install -y java-11-openjdk net-tools wget firewalld unzip
 
 sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 
-sudo yum install -y jenkins
+sudo yum install -y jenkins maven
 
 sudo systemctl daemon-reload
 sudo systemctl enable firewalld
@@ -32,3 +32,14 @@ firewall-cmd --reload
 echo "Installing Jenkins Plugins"
 JENKINSPWD=$(sudo cat /var/lib/jenkins/secrets/initialAdminPassword)
 echo $JENKINSPWD
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+sudo systemctl enable docker
+sudo systemctl start docker
