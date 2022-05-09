@@ -43,3 +43,17 @@ sudo yum install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 sudo systemctl enable docker
 sudo systemctl start docker
+
+cat <<EOF >/etc/profile.d/maven.sh
+export JAVA_HOME=/usr/lib/jvm/jre-openjdk
+export M2_HOME=/opt/maven
+export MAVEN_HOME=/opt/maven
+export PATH=${M2_HOME}/bin:${PATH}
+EOF
+
+chmod +x /etc/profile.d/maven.sh
+sudo mkdir /opt/maven
+
+echo "@reboot source /etc/profile.d/maven.sh" >> /etc/crontab
+systemctl enable crond.service
+systemctl start crond.service
