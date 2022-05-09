@@ -57,3 +57,9 @@ sudo mkdir /opt/maven
 echo "@reboot source /etc/profile.d/maven.sh" >> /etc/crontab
 systemctl enable crond.service
 systemctl start crond.service
+
+sudo usermod -aG docker jenkins
+sudo /usr/sbin/adduser --system docker
+newgrp docker
+sudo setfacl -m "g:docker:rw" /var/run/docker.sock
+sudo setfacl --modify user:jenkins:rw /var/run/docker.sock
