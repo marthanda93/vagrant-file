@@ -18,10 +18,18 @@ AUTH_REQUIRED = False
 DEBUG=True
 TESTING=True
 SECRET_KEY='$(< /dev/urandom tr -dc A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+= | head -c 32)'
-PLUGINS=['reject', 'blackout', 'sns']
+PLUGINS=['reject', 'blackout', 'sns', 'heartbeat']
+ADMIN_ROLES = ['delivery','dev_admins']
 JSON_AS_ASCII=False
 JSON_SORT_KEYS=True
 JSONIFY_PRETTYPRINT_REGULAR=True
+DELETE_EXPIRED_AFTER = 0
+DELETE_INFO_AFTER = 0
+DEFAULT_EXPIRED_DELETE_HRS = 0
+DEFAULT_INFO_DELETE_HRS = 0
+HEARTBEAT_EVENTS=['Heartbeat', 'Watchdog']
+ALERT_TIMEOUT = 14400  # 12 hours
+HEARTBEAT_TIMEOUT = 7200
 DATABASE_URL = 'mongodb://127.0.0.1:27017/?connectTimeoutMS=300000'
 DATABASE_NAME = 'monitoring'
 DATABASE_RAISE_ON_ERROR = False
