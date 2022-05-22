@@ -23,7 +23,7 @@ Vagrant.configure(k8s['api_version']) do |config|
             vb.cpus = k8s['resources']['master']['cpus']
         end
 
-        # subconfig.vm.provision "shell", path: "bootstrap.sh"
+        subconfig.vm.provision "shell", path: "bootstrap.sh"
         subconfig.vm.provision "Reboot to load all config", type:"shell", inline: "shutdown -r now"
     end
 end
