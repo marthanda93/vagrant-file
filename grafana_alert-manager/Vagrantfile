@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'yaml'
+require 'open3'
+
+k8s = YAML.load_file(File.join(File.dirname(__FILE__), 'config.yaml'))
+ENV["LC_ALL"] = "en_US.UTF-8"
+
+Vagrant.configure(k8s['api_version']) do |config|
+	config.vm.boot_timeout = 600
+
+    config.vm.define "#{k8s['cluster']['master']}" do |subconfig|
+        subconfig.vm.post_up_message = $msg
+        subconfig.vm.box = k8s['image']
+        subconfig.vm.box_check_update = false
+
+        subconfig.vm.hostname = "#{k8s['cluster']['master']}"
+        subconfig.vm.network :private_network, ip: "#{k8s['ip_part']}.10"
+
+        subconfig.vm.provider "virtualbox" do |vb|
+            vb.memory = k8s['resources']['master']['memory']
+            vb.cpus = k8s['resources']['master']['cpus']
+        end
+
+        # subconfig.vm.provision "shell", path: "bootstrap.sh"
+        subconfig.vm.provision "Reboot to load all config", type:"shell", inline: "shutdown -r now"
+    end
+end
