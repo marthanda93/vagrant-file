@@ -24,7 +24,7 @@ Vagrant.configure(k8s['api_version']) do |config|
         end
 
         subconfig.vm.provision "shell", path: "bootstrap.sh"
-        subconfig.vm.provision "shell", inline: "python3 app.py"
+        subconfig.vm.provision "shell", inline: "python3 dashboard.py"
         subconfig.vm.provision "Reboot to load all config", type:"shell", inline: "shutdown -r now"
     end
 end
