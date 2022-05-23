@@ -1,5 +1,5 @@
 sudo apt-get -y update
-DEBIAN_FRONTEND=noninteractive sudo apt-get install prometheus prometheus-node-exporter prometheus-pushgateway prometheus-alertmanager net-tools jq -y
+DEBIAN_FRONTEND=noninteractive sudo apt-get install prometheus prometheus-node-exporter prometheus-pushgateway prometheus-alertmanager net-tools jq python3-pip -y
 
 sudo systemctl enable prometheus
 sudo systemctl start prometheus
@@ -16,6 +16,7 @@ sudo apt-get install grafana -y
 sudo systemctl enable grafana-server
 sudo systemctl start grafana-server
 
+sudo pip3 install grafana-backup
 sleep 30
 
 if [ $(systemctl is-active grafana-server) != "active" ]; then
